@@ -18,6 +18,9 @@ namespace Imenik
             InitializeComponent();
         }
 
+        public string ime1;
+        public string priimek1;
+
         private void Form1_Load(object sender, EventArgs e)
         {
             List<Imenik_helper.Imenik> seznamImenikov = new List<Imenik_helper.Imenik>();
@@ -33,10 +36,11 @@ namespace Imenik
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string imeImenika = comboBox1.SelectedItem.ToString();
             List<Osebe> seznamOseb = new List<Osebe>();
 
             OsebeDatabase db = new OsebeDatabase();
-            seznamOseb = db.OdpriImenik();
+            seznamOseb = db.OdpriImenik(imeImenika);
             dataGridView1.DataSource = seznamOseb;
         }
 
@@ -73,6 +77,59 @@ namespace Imenik
         {
             Form2 dodajOsebo = new Form2();
             dodajOsebo.Show();
+        }
+
+        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            OsebeDatabase db = new OsebeDatabase();
+
+            var row = dataGridView1.CurrentCell.RowIndex;
+            var collumn = dataGridView1.CurrentCell.ColumnIndex;
+
+            string ime = dataGridView1.Rows[row].Cells[0].Value.ToString();
+            string priimek = dataGridView1.Rows[row].Cells[1].Value.ToString();
+            string naslov = dataGridView1.Rows[row].Cells[2].Value.ToString();
+            string telStevilka = dataGridView1.Rows[row].Cells[3].Value.ToString();
+            string email = dataGridView1.Rows[row].Cells[4].Value.ToString();
+            string imenik_id = dataGridView1.Rows[row].Cells[5].Value.ToString();
+
+            Osebe oseba = new Osebe(ime, priimek, naslov, telStevilka, email, imenik_id);
+            db.PosodobiOsebo(oseba, ime1, priimek1);
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var row = dataGridView1.CurrentCell.RowIndex;
+            var collumn = dataGridView1.CurrentCell.ColumnIndex;
+
+            ime1 = dataGridView1.Rows[row].Cells[0].Value.ToString();
+            priimek1 = dataGridView1.Rows[row].Cells[1].Value.ToString();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string imeImenika = comboBox1.SelectedItem.ToString();
+
+            OsebeDatabase db = new OsebeDatabase();
+
+            var row = dataGridView1.CurrentCell.RowIndex;
+            var collumn = dataGridView1.CurrentCell.ColumnIndex;
+
+
+            string ime = dataGridView1.Rows[row].Cells[0].Value.ToString();
+            string priimek = dataGridView1.Rows[row].Cells[1].Value.ToString();
+            string naslov = dataGridView1.Rows[row].Cells[2].Value.ToString();
+            string telStevilka = dataGridView1.Rows[row].Cells[3].Value.ToString();
+            string email = dataGridView1.Rows[row].Cells[4].Value.ToString();
+            string imenik_id = dataGridView1.Rows[row].Cells[5].Value.ToString();
+
+            Osebe oseba = new Osebe(ime, priimek, naslov, telStevilka, email, imenik_id);
+            db.IzbrisiOsebo(oseba);
+
+            List<Osebe> seznamOseb = new List<Osebe>();
+
+            seznamOseb = db.OdpriImenik(imeImenika);
+            dataGridView1.DataSource = seznamOseb;
         }
     }
 }
